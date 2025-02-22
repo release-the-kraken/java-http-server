@@ -8,10 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * HttpDecoder:
@@ -46,13 +43,38 @@ public class HttpDecoder {
             request.setUri(new URI(httpInfo[2]));
             return Optional.of(addRequestHeaders(msg, request));
         } catch (URISyntaxException | IllegalArgumentException e) {
+
+            Logger.error("Exception when building request.", e);
             return Optional.empty();
         }
     }
 
     private static HttpRequest addRequestHeaders(List<String> msg, HttpRequest request) {
-        //TODO implement method
-        return null;
+        final Map<String, List<String>> headers = new HashMap<>();
+
+        if (msg.size() > 1) {
+            for (int i = 0; i < msg.size(); i++) {
+                String header = msg.get(i);
+                int colonIndex = header.indexOf(":");
+                if (!(colonIndex > 0 && header.length() > colonIndex + 1)) {
+                    break;
+                }
+                String headerKey = header.substring(0, colonIndex);
+                String headerValue = header.substring(colonIndex + 1);
+
+                headers.compute(headerKey, (k, v) -> {
+                    if (v != null){
+                        v.add(headerValue);
+                    } else {
+                        v = new ArrayList<>();
+                    }
+                    return v;
+                });
+            }
+        }
+
+        request.setRequestHeaders(headers);
+        return request;
     }
 
     private static Optional<List<String>> readMessage(InputStream inputStream) {
@@ -74,6 +96,7 @@ public class HttpDecoder {
             }
             return Optional.of(message);
         } catch (Exception e) {
+            Logger.error("Exception when reading message", e);
             return Optional.empty();
         }
     }

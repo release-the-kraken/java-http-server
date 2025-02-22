@@ -35,9 +35,9 @@ public class HttpHandler {
 
     private void handleRequest(HttpRequest req, BufferedWriter bufferedWriter) {
         final String routeKey = req
-                .httpMethod()
+                .getHttpMethod()
                 .name()
-                .concat(req.uri().getRawPath());
+                .concat(req.getUri().getRawPath());
 
         if (routes.containsKey(routeKey)){
             ResponseWriter.writeResponse(bufferedWriter, routes.get(routeKey).run(req));

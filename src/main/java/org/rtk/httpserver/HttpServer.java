@@ -1,8 +1,6 @@
 package org.rtk.httpserver;
 
 import org.rtk.httphandler.HttpHandler;
-import org.rtk.httpserver.model.HttpMethod;
-import org.rtk.httpserver.model.RequestRunner;
 import org.rtk.logger.Logger;
 
 import java.io.IOException;

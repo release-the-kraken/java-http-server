@@ -1,4 +1,4 @@
-package org.rtk.httpserver.model;
+package org.rtk.httpserver;
 
 public enum HttpMethod {
     GET,

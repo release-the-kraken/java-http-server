@@ -1,8 +1,6 @@
 package org.rtk.httpserver;
 
 import org.rtk.httphandler.HttpHandler;
-import org.rtk.httpserver.model.HttpMethod;
-import org.rtk.httpserver.model.RequestRunner;
 import org.rtk.logger.Logger;
 
 import java.io.IOException;
@@ -18,7 +16,6 @@ public class HttpServer {
     private final ServerSocket socket;
     private final Executor threadPool;
     private HttpHandler handler;
-    private final Logger log = new Logger();
 
     public HttpServer(int port) throws IOException {
         this.routes = new HashMap<>();
@@ -42,9 +39,9 @@ public class HttpServer {
     private void handleConnection(Socket clientConnection) {
         Runnable httpRequestRunner = () -> {
             try {
-                handler.handleConnection();
-            } catch (IOException ignored) {
-                log.error("Exception during connection");
+                handler.handleConnection(clientConnection.getInputStream(), clientConnection.getOutputStream());
+            } catch (IOException e) {
+                Logger.error("Exception during connection", e);
             }
         };
         threadPool.execute(httpRequestRunner);
